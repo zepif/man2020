@@ -1,0 +1,132 @@
+/// |L||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+    cout << "Начать тест:(1/0) ";
+    bool to_start_test = 0;
+    cin >> to_start_test;
+    char right_res;
+    if (to_start_test) {
+        fin.open("test.da");
+        fin >> input[0];
+        string s;
+        fin >> s;
+                input[1] = job[s];
+            fin >> s;
+                input[2] = marital[s];
+            fin >>s;
+                input[3] = education[s];
+            fin >> s;
+                input[4] = def[s];
+            fin >> s;
+                input[5] = def[s];
+            fin >> s;
+                input[6] = month[s];
+            fin >> s;
+                input[7] = day[s];
+        nn.set_input(input);
+        result = nn.ForwardFeed(string("show results"));
+        cout << "Какой ответ на самом деле?";
+        fin >> s;
+            int right_res = rec[s];
+        if (right_res != result) {
+            cout << "Исправляю ошибку!";
+            
+            
+              nn.BackPropogation(result, right_res, 0.05);
+            nn.SaveWeights();
+        }
+    }
+    cout << "Начать универсальный тест: ";
+    bool start_universal = 0;
+    cin >> start_universal;
+
+
+    if (start_universal) {
+        fin.close();
+        int length;
+        int rightAnswers = 0;
+        cout << "Введите кол-во примеров в тесте: ";
+        cin >> length;
+        fin.open("universal_test.txt");
+        for (int i = 0; i < length; i++) {
+            fin >> input[0];
+        string s;
+        fin >> s;
+                input[1] = job[s];
+            fin >> s;
+                input[2] = marital[s];
+            fin >>s;
+                input[3] = education[s];
+            fin >> s;
+                input[4] = def[s];
+            fin >> s;
+                input[5] = def[s];
+            fin >> s;
+                input[6] = month[s];
+            fin >> s;
+                input[7] = day[s];
+            fin >> s;
+            right_res = rec[s];
+            nn.set_input(input);
+            result = nn.ForwardFeed();
+            if (right_res == result) {
+                rightAnswers++;
+            }
+        }
+        cout << "Тест пройден! Процент правильных ответов: " << double(rightAnswers) / double(length) * 100 << " %\n";
+    }
+
+
+
+
+
+
+
+/**
+Description of person :
+1) age (numerical)
+2) job (categorical: 'admin.','blue-collar','entrepreneur','housemaid','management','retired',
+                     'self-employed','services','student','technician','unemployed','unknown')
+
+3) marital (categorical: 'divorced','married','single','unknown'; note: 'divorced' means divorced or widowed)
+4) education (categorical: 'basic.4y','basic.6y','basic.9y','high.school','illiterate',
+                           'professional.course','university.degree','unknown')
+
+5) default has credit ? (categorical: 'no','yes','unknown')
+6) housing has housing loan? (categorical: 'no','yes','unknown')
+7) month last contact month of year (categorical: 'jan', 'feb', 'mar', ..., 'nov', 'dec')
+8) day of week last contact day of the week (categorical: 'mon','tue','wed','thu','fri')
+**/
+
+/**
+Types of advertising :
+1) policy
+2) technique
+3) games
+4) music
+5) internet services
+6) fashion and style
+7) rest
+8) education
+**/
+
+
+    double ForwardFeed(string param)   /// вычесление ответа, с его выводом
+    {
+        setlocale(LC_ALL, "ru");
+        for (int i = 1; i < layers; i++)
+        {
+            LayersCleaner(i, 0, size[i]);
+            ForwardFeeder(i, 0, size[i]);
+        }
+        double max = 0;
+        double prediction = 0;
+        for (int i = 0; i < size[layers - 1]; i++)
+        {
+            if (neurons[layers - 1][i].value > max)
+            {
+                max = neurons[layers - 1][i].value;
+                prediction = i;
+            }
+        }
+        cout << "я считаю, что ему подходит : " << rek[prediction] << endl;
+        return prediction;
+    }
